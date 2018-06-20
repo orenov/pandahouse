@@ -38,7 +38,8 @@ def prepare(query, connection=None, external=None):
 def execute(query, connection=None, data=None, external=None, stream=False):
     host, params, files = prepare(query, connection, external=external)
 
-    response = requests.post(host, params=params, data=data,
+    #verify=False, for insecure ssl without certificate.pem file
+    response = requests.post(host, params=params, verify=False, data=data,
                              stream=stream, files=files)
 
     try:
