@@ -3,9 +3,10 @@ from .utils import escape
 from .convert import normalize, partition, to_dataframe, to_csv
 
 
-def selection(query, tables=None, index=True):
-    query = query.strip().strip(';')
-    query = '{} FORMAT TSVWithNamesAndTypes'.format(query)
+def selection(query, tables=None, index=True, add_col_names=True):
+    if add_col_names:
+        query = query.strip().strip(';')
+        query = '{} FORMAT TSVWithNamesAndTypes'.format(query)
 
     external = {}
     tables = tables or {}
@@ -28,7 +29,7 @@ def insertion(df, table, index=True):
     return query, df
 
 
-def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=None, as_data_frame=True, **kwargs):
+def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=None, as_data_frame=True, add_col_names=True, **kwargs):
     """Reads clickhouse query to pandas dataframe
 
     Parameters
@@ -53,10 +54,13 @@ def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=N
         certificate.pem file path
     as_data_frame: bool, default True
          return object as data frame or raw content of requests
+    add_col_names: bool, default True
+          whether to add column names with query
 
     Additional keyword arguments passed to `pandas.read_table`
     """
-    query, external = selection(query, tables=tables, index=index)
+    
+    query, external = selection(query, tables=tables, index=index, add_col_names=add_col_names)
     if as_data_frame:
         lines = execute(query, 
                         external=external, 
