@@ -57,11 +57,19 @@ def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=N
     Additional keyword arguments passed to `pandas.read_table`
     """
     query, external = selection(query, tables=tables, index=index)
-    lines = execute(query, external=external, stream=True,
-                    connection=connection, cert_file=cert_file)
     if as_data_frame:
+        lines = execute(query, 
+                        external=external, 
+                        stream=True,
+                        connection=connection, 
+                        cert_file=cert_file)
         return to_dataframe(lines, **kwargs)
     else:
+        lines = execute(query, 
+                        external=external, 
+                        stream=False,
+                        connection=connection, 
+                        cert_file=cert_file)
         return lines
 
 
