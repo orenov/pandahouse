@@ -28,7 +28,7 @@ def insertion(df, table, index=True):
     return query, df
 
 
-def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=None, **kwargs):
+def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=None, as_data_frame=True, **kwargs):
     """Reads clickhouse query to pandas dataframe
 
     Parameters
@@ -51,13 +51,18 @@ def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=N
         whether to serialize `tables` with index or not
     cert_file: str, default None
         certificate.pem file path
+    as_data_frame: bool, default True
+         return object as data frame or raw content of requests
 
     Additional keyword arguments passed to `pandas.read_table`
     """
     query, external = selection(query, tables=tables, index=index)
     lines = execute(query, external=external, stream=True,
                     connection=connection, cert_file=cert_file)
-    return to_dataframe(lines, **kwargs)
+    if as_data_frame:
+        return to_dataframe(lines, **kwargs)
+    else:
+        return lines
 
 
 def to_clickhouse(df, table, index=True, chunksize=1000, connection=None, cert_file=None):
