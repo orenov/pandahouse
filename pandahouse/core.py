@@ -28,7 +28,7 @@ def insertion(df, table, index=True):
     return query, df
 
 
-def read_clickhouse(query, tables=None, index=True, connection=None, **kwargs):
+def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=None, **kwargs):
     """Reads clickhouse query to pandas dataframe
 
     Parameters
@@ -49,18 +49,20 @@ def read_clickhouse(query, tables=None, index=True, connection=None, **kwargs):
         clickhouse password
     index: bool, default True
         whether to serialize `tables` with index or not
+    cert_file: str, default None
+        certificate.pem file path
 
     Additional keyword arguments passed to `pandas.read_table`
     """
     query, external = selection(query, tables=tables, index=index)
     lines = execute(query, external=external, stream=True,
-                    connection=connection)
+                    connection=connection, cert_file)
     return to_dataframe(lines, **kwargs)
 
 
-def to_clickhouse(df, table, index=True, chunksize=1000, connection=None):
+def to_clickhouse(df, table, index=True, chunksize=1000, connection=None, cert_file=None):
     query, df = insertion(df, table, index=index)
     for chunk in partition(df, chunksize=chunksize):
-        execute(query, data=to_csv(chunk), connection=connection)
+        execute(query, data=to_csv(chunk), connection=connection, cert_file)
 
     return df.shape[0]
