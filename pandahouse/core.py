@@ -56,13 +56,13 @@ def read_clickhouse(query, tables=None, index=True, connection=None, cert_file=N
     """
     query, external = selection(query, tables=tables, index=index)
     lines = execute(query, external=external, stream=True,
-                    connection=connection, cert_file)
+                    connection=connection, cert_file=cert_file)
     return to_dataframe(lines, **kwargs)
 
 
 def to_clickhouse(df, table, index=True, chunksize=1000, connection=None, cert_file=None):
     query, df = insertion(df, table, index=index)
     for chunk in partition(df, chunksize=chunksize):
-        execute(query, data=to_csv(chunk), connection=connection, cert_file)
+        execute(query, data=to_csv(chunk), connection=connection, cert_file=cert_file)
 
     return df.shape[0]
