@@ -28,7 +28,7 @@ CH2PD['Null'] = 'object'
 CH2PD['Nothing'] = 'object'
 
 NULLABLE_COLS = ['UInt64', 'UInt32', 'UInt16', 'UInt8', 'Float64', 'Float32',
-                 'Int64', 'Int32', 'Int16', 'Int8']
+                 'Int64', 'Int32', 'Int16', 'Int8', 'String', 'DateTime']
 
 for col in NULLABLE_COLS:
     CH2PD['Nullable({})'.format(col)] = CH2PD[col]
@@ -72,9 +72,12 @@ def to_dataframe(lines, **kwargs):
         else:
             dtypes[name] = dtype
 
+        if chtype == "Nullable(UInt8)":
+            dtypes[name] = "float64"
+
     return pd.read_table(lines, header=None, names=names, dtype=dtypes,
                          parse_dates=parse_dates, converters=converters,
-                         na_values=set(), keep_default_na=False, **kwargs)
+                         na_values="\N", keep_default_na=False, **kwargs)
 
 
 def partition(df, chunksize=1000):
