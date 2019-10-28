@@ -77,7 +77,7 @@ def to_dataframe(lines, **kwargs):
 
     return pd.read_table(lines, header=None, names=names, dtype=dtypes,
                          parse_dates=parse_dates, converters=converters,
-                         na_values="\N", keep_default_na=False, **kwargs)
+                         na_values=r'\N', keep_default_na=False, **kwargs)
 
 
 def partition(df, chunksize=1000):
