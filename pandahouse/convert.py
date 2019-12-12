@@ -72,7 +72,7 @@ def to_dataframe(lines, **kwargs):
         else:
             dtypes[name] = dtype
 
-        if chtype == "Nullable(UInt8)":
+        if chtype == "Nullable(UInt8)" or chtype == "Nullable(Int32)":
             dtypes[name] = "float64"
 
     return pd.read_table(lines, header=None, names=names, dtype=dtypes,
